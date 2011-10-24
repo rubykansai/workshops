@@ -3,8 +3,7 @@ CALSCALE:GREGORIAN
 PRODID:iCalendar-Ruby
 VERSION:2.0
 BEGIN:VEVENT
-DESCRIPTION:関西のRubyist有志が主催する地域Ruby会議です(後援:日本Rubyの会、Ruby関西)。http://regional
- .rubykaigi.org/kansai04
+DESCRIPTION:関西のRubyist有志が主催する地域Ruby会議です(後援:日本Rubyの会、Ruby関西、Minami.rb)。http://regional.rubykaigi.org/kansai04
 DTEND;TZID=Asia/Tokyo:20111112T180000
 DTSTAMP:20111025T000200
 DTSTART;TZID=Asia/Tokyo:20111111T130000
