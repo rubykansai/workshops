@@ -1,0 +1,1 @@
+10.61.64.19 - - [26/Jun/2005:06:23:18 +0900] "GET /theme/base.css HTTP/1.1" 200 2030 "http://kazuhiko.tdiary.net/20040411.html" "Mozilla/5.0 (Windows; U; Windows NT 5.1; ja-JP; rv:1.7.8) Gecko/20050511 Firefox/1.0.4"
