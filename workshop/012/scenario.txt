@@ -1,0 +1,392 @@
+○登場人物
+
+こ：コウザイ（先輩プログラマ）
+さ：サカイ（後輩プログラマ）
+か：かずひこ（謎の解説者）
+
+○導入
+
+こ「さかいさーん、XPって知ってる？」
+
+さ「えー、しりません。それって何ですか？」
+
+こ「eXtreme Programmingの略で、『すっごいプログラミング』なのよ！」
+
+さ「どう『すっごい』んですか？」
+
+こ「話せば長いけど、とにかくすごいのよ！　で、XPのプラクティスの中に『ペ
+ア・プログラミング』っていうのがあるので、今日はそれをやってみない？」
+
+さ「面白そうですね。ぜひやりましょう」
+
+こ「XPには他にも、テスト・ファーストっていうプラクティスがあるので、それ
+を今日は一緒にやってみよう！」
+
+さ「お願いします〜」
+
+か：ここからしばらくXPの説明...
+
+○ペアプロ開始
+
+さ「ペアプロってどういうふうに進めるんですか？」
+
+こ「一つのコンピュータの前に二人で座って、ドライバとナビゲータってよばれ
+る役割にわかれて、ドライバの人がキーボードを操作して、ナビゲータの人が横
+で見ながら考えたりアドバイスしたりするのよ」
+
+さ「へー、最初はどっちがドライバしますか？」
+
+こ「じゃあ、最初はサカイさんドライバでやってみよう」
+
+さ「は〜い」
+
+こ「今日は、最初だから簡単なテーマがいいかなー。じゃあ、社員さんクラスを
+つくって給料の計算をする、というテーマにしよう」
+
+さ「社員さんクラスはどんな情報を持つようにすればいいですか？」
+
+こ「そうねぇ、社員番号と名前と基本給にしてみよう」
+
+さ「じゃあ、shain.rbっていうファイルを作りますね」
+
+○テスト・ファースト
+
+こ「ううん、今日はテスト・ファースト！　だから、まずはtest_shain.rbって
+いうファイルから作るのよ。すっごく簡単なひながたを作っておいたからそれを
+開いて」
+
+さ「いきなりテストからなんですね。ではエディタで開きます〜」
+
+# test_shain.rb
+require "test/unit"
+
+class ShainTest < Test::Unit::TestCase
+  def test_initialize
+
+  end
+end
+
+さ「簡単に説明してもらえますか？」
+
+こ「まずはじめの行は、テスト用のライブラリを読み込んでいるところ。つぎに、
+Test::Unit::TestCaseというクラスを継承したShainTestというクラスを定義し
+ているけど、そこのなかに、testなんちゃらっていうメソッドを作って、そのな
+かにテストを書いていくの」
+
+さ「へー」
+
+か：Rubyのテスト・フレームワークについて解説
+
+こ「まだほとんど空っぽだけど、これでとりあえず実行できるのよ」
+
+さ「やってみます〜」
+
+$ ruby test_shain.rb
+Loaded suite test_shain
+Started
+.
+Finished in 0.018539 seconds.
+
+1 tests, 0 assertions, 0 failures, 0 errors
+
+さ「おー。テストが一個って表示されて、あとはアサーション、失敗、エラーが
+それぞれゼロと書いていますね。このアサーションって何ですか？」
+
+こ「アサーションっていうのは、『こうしたらこうなるはずというのを確認する
+メソッド』の数なの」
+
+さ「今はまだ何もテストを書いてないからゼロなんですね」
+
+こ「そういうこと。じゃあ、テストを書いていこう〜」
+
+さ「いろいろ教えてくださいね」
+
+こ「まずShain.newでshainという名前のインスタンスを作って、それのnoとか
+nameを確認しよっか。いっしょかどうかを確認するのは、assert_equal(期待す
+る値, 実際の値)というメソッドなので...」
+
+# test_shain.rb
+require "test/unit"
+require "shain"
+
+class ShainTest < Test::Unit::TestCase
+  def test_initialize
+    shain = Shain.new(1, "こなみ", 100000)
+    assert_equal(1, shain.no)
+    assert_equal("こなみ", shain.name)
+  end
+end
+
+さ「では、shain.rbのinitializeを書きますね」
+
+こ「とりあえずは、引数を書くだけでいいかな」
+
+# shain.rb
+class Shain
+  def initialize(no, name, base_salary)
+  end
+end
+
+さ「できました」
+
+こ「じゃあ、noメソッドとnameメソッドを、とりあえず定義しておこう」
+
+# shain.rb
+class Shain
+  def initialize(no, name, base_salary)
+  end
+
+  def no
+  end
+
+  def name
+  end
+end
+
+さ「こんな感じですか？」
+
+こ「そうね。ひとまずテストを実行してみよう」
+
+$ ruby test_shain1.rb
+Loaded suite test_shain1
+Started
+F
+Finished in 0.061542 seconds.
+
+  1) Failure:
+test_initialize(ShainTest) [test_shain1.rb:7]:
+<1> expected but was
+<nil>.
+
+1 tests, 1 assertions, 1 failures, 0 errors
+
+さ「失敗しちゃいました」
+
+こ「まだ実装してないからね。じゃあ、次は成功を目指して実装しよう」
+
+さ「initializeの中で、インスタンス変数にとっておいて、それを返せばいいんですよね」
+
+こ「そうそう」
+
+# shain.rb
+class Shain
+  def initialize(no, name, base_salary)
+    @no = no
+    @name = name
+  end
+
+  def no
+    return @no
+  end
+
+  def name
+    return @name
+  end
+end
+
+さ「じゃあ、テストしてみます〜」
+
+$ ruby test_shain1.rb
+Loaded suite test_shain1
+Started
+.
+Finished in 0.017904 seconds.
+
+1 tests, 2 assertions, 0 failures, 0 errors
+
+さ「合格しました〜」
+
+○リファクタリング
+
+こ「うん、うまくいったね。でも、noっていうメソッドと、nameっていうメソッ
+ドは同じ名前のインスタンス変数を返しているだけなので、attr_readerで指定
+するだけでもいいよね」
+
+さ「え〜っと、やってみてもらっていいですか？」
+
+こ「うん、じゃあドライバを交替するね」
+
+# shain.rb
+class Shain
+  attr_reader :no, :name
+  
+  def initialize(no, name, base_salary)
+    @no = no
+    @name = name
+  end
+end
+
+さ「さっきより短くなりましたね！」
+
+こ「じゃあ、念のためにまたテストしよう」
+
+$ ruby test_shain1.rb
+Loaded suite test_shain1
+Started
+.
+Finished in 0.017904 seconds.
+
+1 tests, 2 assertions, 0 failures, 0 errors
+
+こ「うん、大丈夫ね」
+
+さ「一度作りおえたものでも、何度も簡単にテストできるとさらに安心ですね！」
+
+こ「そうね。それが自動テストの魅力だね」
+
+か：ここでリファクタリングについて解説
+
+○Fake it!
+
+こ「じゃあ、いよいよ給料をやってみよう」
+
+さ「給料はどうやって決めるんですか？」
+
+こ「基本給の2倍＋3万円にしようか」
+
+さ「じゃあ、また私がドライバやりますね。えっと、じゃあテストはこんな感じ
+ですか？」
+
+# test_shain.rb
+require "test/unit"
+require "shain"
+
+class ShainTest < Test::Unit::TestCase
+  def test_initialize
+    shain = Shain.new(1, "こなみ", 100000)
+    assert_equal(1, shain.no)
+    assert_equal("こなみ", shain.name)
+  end
+
+  def test_salary
+    shain = Shain.new(1, "こなみ", 100000)
+    assert_equal(230000, shain.salary)
+  end
+end
+
+こ「すごーい。そんな感じよ〜」
+
+さ「ありがとうございます〜。でも、先生の給料ってあまりたいしたことないで
+すね〜」
+
+こ「そうだね〜たいしたことないね〜。じゃあ実装はどうなるかな？」
+
+さ「えーっと、initializeで基本給もインスタンス変数にとっておいて、それか
+ら...」
+
+こ「とりあえず23万円って返しちゃえばいいのよ」
+
+さ「すっごく適当じゃないですか〜」
+
+こ「いいのいいの。適当でも、まずはテストが通るのが大事なの」
+
+# shain.rb
+class Shain
+  attr_reader :no, :name
+  
+  def initialize(no, name, base_salary)
+    @no = no
+    @name = name
+  end
+
+  def salary
+    return 230000
+  end
+end
+
+さ「では、テストいきます」
+
+$ ruby test_shain.rb
+Loaded suite test_shain
+Started
+..
+Finished in 0.030108 seconds.
+
+2 tests, 3 assertions, 0 failures, 0 errors
+
+か：Fake it!について解説
+
+○トライアンギュレーション
+
+こ「とおったね。じゃあ、基本給が違う人をもう一人つくってみよう」
+
+さ「じゃあ、名前は『みやした』にしますね〜。基本給は...8万円でいいや〜」
+
+# test_shain.rb
+require "test/unit"
+require "shain"
+
+class ShainTest < Test::Unit::TestCase
+  def test_initialize
+    shain = Shain.new(1, "こなみ", 100000)
+    assert_equal(1, shain.no)
+    assert_equal("こなみ", shain.name)
+  end
+
+  def test_salary
+    shain = Shain.new(1, "こなみ", 100000)
+    assert_equal(230000, shain.salary)
+    shain2 = Shain.new(2, "みやした", 80000)
+    assert_equal(190000, shain2.salary)
+  end
+end
+
+こ「うん、いい感じ。じゃあ、テストを実行しよう」
+
+$ ruby test_shain.rb
+Loaded suite test_shain
+Started
+.F
+Finished in 0.150665 seconds.
+
+  1) Failure:
+test_salary(ShainTest) [test_shain.rb:15]:
+<190000> expected but was
+<230000>.
+
+2 tests, 4 assertions, 1 failures, 0 errors
+
+さ「やっぱり失敗しましたね」
+
+こ「そうだね、じゃあ今度こそちゃんと実装しよう」
+
+さ「はーい」
+
+# shain.rb
+class Shain
+  attr_reader :no, :name
+  
+  def initialize(no, name, base_salary)
+    @no = no
+    @name = name
+    @base_salary = base_salary
+  end
+
+  def salary
+    return @base_salary * 2 + 30000
+  end
+end
+
+こ「そんな感じね。じゃあ、もう一度テストしてみよう」
+
+$ ruby test_shain.rb
+Loaded suite test_shain
+Started
+..
+Finished in 0.020651 seconds.
+
+2 tests, 4 assertions, 0 failures, 0 errors
+
+さ「うまくいきました〜 v(^ ^)」
+
+か：ここでトライアンギュレーションについて解説
+
+○おわりに
+
+こ「今日、はじめてテスト駆動開発をしてみてどんな感じだった？」
+
+さ「そうですねぇ、失敗したり成功したりで、とてもリズミカルな感じですね」
+
+こ「そう、そのリズム感がテスト・ファーストの楽しさなのよ」
+
+か：テスト駆動開発についてのまとめ
