@@ -1,0 +1,212 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=SHIFT_JIS">
+<meta http-equiv="Content-Style-Type" content="text/css"><title>JRuby</title>
+
+<style type="text/css">
+<!--
+H1{
+  text-align : center;
+  padding-top : 4pt;
+  padding-left : 4pt;
+  padding-right : 4pt;
+  padding-bottom : 4pt;border-width : 3px 3px 3px 3px;border-style : solid solid solid solid;border-color : gray gray gray gray;
+  background-color : navy;
+  color : white;
+}
+H2{
+  border-bottom-width : 4px;
+  border-bottom-style : solid;
+  border-bottom-color : green;
+}
+H3{
+  border-bottom-width : 3px;
+  border-bottom-style : dotted;
+  border-bottom-color : olive;
+  margin-left : 1em;
+  margin-right : 1em;
+}
+.author{
+  font-family : serif;
+  text-align : right;
+  font-weight : bold;
+}
+P{
+  margin-left : 2em;
+  margin-right : 2em;
+}
+PRE{
+  background-color : #f3f4df;border-width : 1px 1px 1px 1px;border-style : dotted dotted dotted dotted;border-color : olive olive olive olive;
+  margin-left : 3em;
+  margin-right : 3em;
+  padding-top : 1ex;
+  padding-left : 1ex;
+  padding-right : 1ex;
+  padding-bottom : 1ex;
+  font-family : monospace;
+  
+}
+H4{
+  font-family : sans-serif;
+  text-decoration : underline;
+  margin-left : 2em;
+  margin-right : 2em;
+}
+BODY{
+  font-family : serif;
+}
+-->
+</style></head><body>
+<h1>JRuby</h1>
+<div class="author">第9回 Ruby勉強会＠関西 / 2006.03.11 / 西本 圭佑</div>
+<h2>概要</h2>
+<h3>JRubyとは</h3>
+<ul>
+  <li>JVM上で動くRuby実行系
+  </li><li>Rubyと同じ文法
+  </li><li>Bean Scripting Framework(BSF)サポート
+  </li><li>0.8.2(Ruby 1.8.2相当)が公開
+  </li><li>CPL/GPL/LGPLでトリプルライセンス
+</li></ul>
+<h3>パッケージ内容(bin版)</h3>
+<ul>
+  <li>jruby-0.8.2
+  <ul>
+    <li>bin: 実行シェル
+    </li><li>docs: ドキュメント
+    </li><li>lib: クラスアーカイブ(Jar)
+    </li><li>samples: サンプルソース
+  </li></ul>
+</li></ul>
+<h3>特徴(長所)</h3>
+<ul>
+  <li>JavaからRubyを呼べる
+  </li><li>RubyからJavaが呼べる
+</li></ul>
+<h3>特徴(短所)</h3>
+<ul>
+  <li>他のScript実装系よりかなり遅い
+  </li><li>Processがない，ThreadはRubyのソレと違う
+  </li><li>一部ライブラリが動かない(Nativeモノとか)
+</li></ul>
+<h3>その他</h3>
+<ul>
+  <li>Java APIの呼び出しが0.8.2系はあまり速くないが，0.8.3系は速くなるらしい
+  </li><li>0.8.4系は，Railsが動く予定らしい
+</li></ul>
+<h2>デモ</h2>
+<h3>Hello, world! (π)</h3>
+<p>sample1.rb</p>
+<pre>def distance(x, y)
+  Math::sqrt(x * x + y * y)
+end
+
+def position()
+  [rand * 2.0 - 1.0, rand * 2.0 - 1.0]
+end
+
+def pi(count)
+  delta_area = 4.0 / count
+  area = 0.0
+  for i in 1..count
+    x, y = position
+    if distance(x, y) &lt;= 1.0
+      area += delta_area
+    end
+  end
+  area
+end
+
+count = 10
+for i in 2..6
+  puts "10^#{i} : #{pi(count)}"
+  count *= 10
+end</pre>
+<h3>JavaからJRuby</h3>
+<p>Sample2.java</p>
+<pre>import org.apache.bsf.BSFException;
+import org.apache.bsf.BSFManager;
+
+public class Sample2 {
+
+  static String source =
+  "if /([0-9]+)\\.([0-9]+)\\.([0-9]+)\\.([0-9]+)/ === '192.168.0.1'\n"
++ "  f = true\n"
++ "  Regexp.last_match.to_a.each {|no|\n"
++ "    if f then f = false else puts no end\n"
++ "  }\n"
++ "end";
+
+  public static void main(String[] args) {
+    BSFManager manager = new BSFManager();
+    manager.registerScriptingEngine(
+      "ruby",
+      "org.jruby.javasupport.bsf.JRubyEngine",
+      new String[] { "rb" });
+    try {
+      manager.eval("ruby", "(java)", 1, 1, source);
+    } catch (BSFException e) {
+      System.err.println(e);
+    }
+  }
+}</pre>
+<h3>JRubyからJava</h3>
+<p>swing1.rb</p>
+<pre>require 'java'
+
+include_class "javax.swing.JFrame"
+include_class "javax.swing.JLabel"
+
+frame = JFrame.new("Hello Swing")
+label = JLabel.new("Hello World")
+
+frame.getContentPane().add(label)
+frame.setDefaultCloseOperation(JFrame::EXIT_ON_CLOSE)
+frame.pack()
+frame.setVisible(true)</pre>
+<p>swing2.rb</p>
+<pre># Import Java packages
+require 'java'
+
+include_class "java.awt.event.ActionListener"
+include_class [
+  "JButton", "JFrame", "JLabel", "JOptionPane"].map {|e| "javax.swing." + e}
+
+frame = JFrame.new("Hello Swing")
+button = JButton.new("Klick Me!")
+
+class ClickAction &lt; ActionListener
+  def actionPerformed(evt)
+    JOptionPane.showMessageDialog(
+      nil,
+        "&lt;html&gt;Hello from &lt;b&gt;&lt;u&gt;JRuby&lt;/u&gt;&lt;/b&gt;."
+      + "&lt;br&gt; Button '#{evt.getActionCommand()}' clicked.")
+  end
+end
+button.addActionListener(ClickAction.new)
+
+# Add the button to the frame
+frame.getContentPane().add(button)
+
+# Show frame
+frame.setDefaultCloseOperation(JFrame::EXIT_ON_CLOSE)
+frame.pack()
+frame.setVisible(true)</pre>
+<h2>まとめ</h2>
+<ul>
+  <li>結局何がうれしいの?
+  <ul>
+    <li>膨大なJava APIを呼び出せる
+    </li><li>LLなRubyをJavaから利用できる
+  </li></ul>
+</li></ul>
+<h2>おわり</h2>
+<ul>
+  <li>JRuby Home
+  <ul>
+    <li><a href="http://jruby.sourceforge.net/">http://jruby.sourceforge.net/</a>
+  </li></ul>
+</li></ul>
+</body></html>
